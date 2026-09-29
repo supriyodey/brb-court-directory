@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>US Court & Public Records Directory (BRB Publications Clone)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+
+  <!-- Minimalist Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <a href="/" class="brand">
+        <span class="brand-badge">BRB</span>
+        <span class="brand-title">Public Records & PAT Directory</span>
+      </a>
+
+      <div class="header-stats">
+        <div class="stat-item">
+          <span>Counties:</span>
+          <span class="stat-value">3,143 US Counties</span>
+        </div>
+        <div class="stat-item">
+          <span>PAT Coverage:</span>
+          <span class="stat-value">81% Onsite</span>
+        </div>
+        <div class="sync-badge">
+          <span class="pulse-dot"></span>
+          <span>Nebius AI Auto-Sync Active</span>
+        </div>
+        <button class="btn btn-sm btn-primary" id="openSyncBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          Auto-Sync Control
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-container">
+
+    <!-- Minimalist Filter Bar -->
+    <section class="filter-section">
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label for="stateSelect">State Jurisdiction</label>
+          <select id="stateSelect" class="form-select">
+            <option value="">All States (50)</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="countySelect">County</label>
+          <select id="countySelect" class="form-select">
+            <option value="">All Counties</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="typeSelect">Court Type</label>
+          <select id="typeSelect" class="form-select">
+            <option value="">All Court Types</option>
+            <option value="SUPERIOR">Superior Court</option>
+            <option value="DISTRICT">District Court</option>
+            <option value="CIRCUIT">Circuit Court</option>
+            <option value="MUNICIPAL">Municipal Court</option>
+            <option value="PROBATE">Probate & Family</option>
+            <option value="RECORDER_OF_DEEDS">Recorder of Deeds</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="searchInput">Instant Search</label>
+          <input type="text" id="searchInput" class="form-input" placeholder="Search court name, city, phone...">
+        </div>
+
+        <div class="filter-group" style="justify-content: center;">
+          <label class="toggle-group">
+            <input type="checkbox" id="patToggle" class="toggle-checkbox">
+            <span class="toggle-label">Onsite PAT Available Only</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- State Quick Select Pills -->
+    <section class="state-selector-bar">
+      <div class="section-label">Quick Select US State</div>
+      <div class="state-pills-scroll" id="statePillsContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- Court Directory Results Grid -->
+    <section>
+      <div class="section-label" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>Public Record & Court Terminals Directory</span>
+      </div>
+
+      <div class="courts-grid" id="courtsGrid">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Court Detail Modal -->
+  <div class="modal-overlay" id="courtModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="font-size:1.1rem; font-weight:700;">Court Directory Record</h3>
+        <button class="close-btn" id="closeModalBtn">&times;</button>
+      </div>
+      <div id="modalBody">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Auto-Sync Control Modal -->
+  <div class="modal-overlay" id="syncModal">
+    <div class="modal-content" style="max-width:700px;">
+      <div class="modal-header">
+        <div>
+          <h3 style="font-size:1.2rem; font-weight:700;">Autonomous AI Update Engine</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted);">Powered by Nebius AI Studio (Llama 3.3 / Qwen 2.5) & Tavily Search API</p>
+        </div>
+        <button class="close-btn" id="closeSyncModalBtn">&times;</button>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1.25rem;">
+        <div>
+          <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary);">Nebius API Key (Optional)</label>
+          <input type="password" id="nebiusKeyInput" class="form-input" placeholder="nebius-api-key..." style="margin-top:0.25rem;">
+        </div>
+        <div>
+          <label style="font-size:0.75rem; font-weight:700; color:var(--text-secondary);">Tavily API Key (Optional)</label>
+          <input type="password" id="tavilyKeyInput" class="form-input" placeholder="tvly-api-key..." style="margin-top:0.25rem;">
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="runSyncBtn" style="width:100%; padding:0.75rem; font-weight:600; margin-bottom:1.5rem;">
+        Run Autonomous Update Pipeline Now
+      </button>
+
+      <div>
+        <h4 style="font-size:0.85rem; font-weight:700; text-transform:uppercase; color:var(--text-secondary); margin-bottom:0.5rem;">Automated Verification Audit Logs</h4>
+        <div id="syncLogsContainer" style="max-height:220px; overflow-y:auto;">
+          <!-- Logs rendered dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
